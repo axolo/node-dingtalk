@@ -1,25 +1,22 @@
 'use strict';
 
-const urllib = require('urllib');
+const axios = require('axios');
 const cacheManager = require('cache-manager');
 const deepmerge = require('deepmerge');
+const DingtalkError = require('./lib/dingtalk-error');
 
 class Dingtalk {
   constructor(config) {
     const defaultConfig = {
-      curl: urllib.request,
-      dataType: 'json',
-      // headers: { 'Content-Type': 'application/json' },
-      cache: {
-        store: 'memory',
-        prefix: 'dingtalk',
-        ttl: 7200, // 2 hours
-      },
+      baseUrl: 'https://oapi.dingtalk.com',
+      corpAppAuthTokenUrl: 'https://oapi.dingtalk.com/gettoken',
+      isvAppAuthTokenUrl: 'https://oapi.dingtalk.com/service/get_corp_token',
+      cache: { store: 'memory', prefix: 'dingtalk', ttl: 7200 },
+      axios,
     };
     this.config = deepmerge(defaultConfig, config);
-    const { curl, cache } = this.config;
-    this.curl = curl;
-    this.cache = cacheManager.caching(cache);
+    this.axios = this.config.axios;
+    this.cache = cacheManager.caching(this.config.cache);
   }
 
   /**
@@ -61,13 +58,37 @@ class Dingtalk {
     });
   }
 
-  async execute(request) {
-    const { curl, config } = this;
-    const { baseUrl, dataType } = config;
-    const { url } = request;
-    const options = { dataType, ...request };
-    console.log(baseUrl + url, options);
-    const response = await curl(baseUrl + url, options);
+  async getCorpAppToken(appKey, appSecret) {
+    const { config } = this;
+    const { corpAppAuthTokenUrl: url, cache } = config;
+    const cacheKey = [ cache.prefix, 'corp', 'token', appKey ].join('-');
+    const cacheToken = await this.getCache(cacheKey);
+    if (cacheToken) return cacheToken;
+    const params = { appkey: appKey, appsecret: appSecret };
+    const { data: token } = await this.axios({ url, params });
+    if (!token) throw new DingtalkError('dingtalk access token required');
+    if (token.errcode) throw new DingtalkError(token);
+    await this.setCache(cacheKey, token, cache);
+    return token;
+  }
+
+  async getToken({ appMode, appKey, appSecret }) {
+    switch (appMode) {
+      default: {
+        const token = await this.getCorpAppToken(appKey, appSecret);
+        return token;
+      }
+    }
+  }
+
+  async execute(request = {}) {
+    const { config } = this;
+    const { appKey, appSecret, baseUrl } = config;
+    const token = await this.getToken({ appKey, appSecret });
+    const { access_token } = token;
+    const url = baseUrl + request.url;
+    const options = deepmerge(request, { url, params: { access_token } });
+    const { data: response } = await this.axios(options);
     return response;
   }
 

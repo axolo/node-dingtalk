@@ -5,11 +5,12 @@ const { parsed: config } = require('dotenv').config();
 
 const dingtalk = new Dingtalk(config);
 
+// execute
 dingtalk.execute({
-  url: '/user',
-  data: { username: 'admin' },
+  url: '/user/simplelist',
+  params: { department_id: 1 },
 }).catch(err => {
   console.log(err);
 }).then(res => {
-  console.log(res.data);
+  console.log(res);
 });

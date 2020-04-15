@@ -1,12 +1,27 @@
 {
   "name": "@axolo/node-dingtalk",
-  "version": "0.0.1",
-  "description": "Dingtalk sdk for Node.js.",
+  "version": "0.0.2",
+  "description": "Dingtalk OpenAPI SDK for Node.js.",
   "main": "src/index.js",
   "scripts": {
     "dev": "nodemon test",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "devDependencies": {
+    "dotenv": "^8.2.0",
+    "eslint": "^6.8.0",
+    "eslint-config-egg": "^8.0.1",
+    "nodemon": "^2.0.3"
+  },
+  "dependencies": {
+    "axios": "^0.19.2",
+    "cache-manager": "^3.2.1",
+    "deepmerge": "^4.2.2",
+    "dingtalk-encrypt": "^1.2.1"
+  },
+  "files": [
+    "src"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/axolo/node-dingtalk.git"
@@ -22,17 +37,5 @@
   "bugs": {
     "url": "https://github.com/axolo/node-dingtalk/issues"
   },
-  "homepage": "https://github.com/axolo/node-dingtalk#readme",
-  "devDependencies": {
-    "dotenv": "^8.2.0",
-    "eslint": "^6.8.0",
-    "eslint-config-egg": "^8.0.1",
-    "nodemon": "^2.0.3"
-  },
-  "dependencies": {
-    "cache-manager": "^3.2.1",
-    "deepmerge": "^4.2.2",
-    "dingtalk-encrypt": "^1.2.1",
-    "urllib": "^2.34.2"
-  }
+  "homepage": "https://github.com/axolo/node-dingtalk#readme"
 }

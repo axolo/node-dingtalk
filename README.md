@@ -1,6 +1,6 @@
 # node-dingtalk
 
-Dingtalk SDK for Node.js.
+Dingtalk OpenAPI SDK for Node.js.
 
 ## API
 
@@ -8,19 +8,24 @@ Dingtalk SDK for Node.js.
 
 > params
 
-|  config   | required |                        description                         |
-| --------- | :------: | ---------------------------------------------------------- |
-| appKey    |   yes    | appKey or suiteKey of ISV app                              |
-| appSecret |   yes    | appSecret or suiteSecret of ISV app                        |
-| baseUrl   |          | base url of [dingtalk open api]                            |
-| cache     |          | [cache-manager] setting for acccess token and jsapi ticket |
-| curl      |          | HTTP Client, [urllib].reqeust                              |
-
+|       config        | required |                          description                           |
+| ------------------- | :------: | -------------------------------------------------------------- |
+| appKey              |   yes    | appKey or suiteKey of ISV app                                  |
+| appSecret           |   yes    | appSecret or suiteSecret of ISV app                            |
+| appMode             |          | `corp` = corp internal app, `isv` = ISV app, default to `corp` |
+| appType             |          | `eapp` = mini app, `h5` = web app, default to `eapp`           |
+| cache               |          | [cache-manager] setting for acccess token and jsapi ticket     |
+| axios               |          | HTTP Client, use [axios]                                       |
+| baseUrl             |          | base url of [dingtalk open api]                                |
+| corpAppAuthTokenUrl |          | corp internal app get access token url                         |
+| isvAppAuthTokenUrl  |          | ISV app get access token url                                   |
 > return
 
 A instance of `Dingtalk` Node.js SDK.
 
-### execute(request, session = null, baseUrl = null)
+### execute(request)
+
+more request options see [axios].
 
 > params
 
@@ -34,7 +39,7 @@ A instance of `Dingtalk` Node.js SDK.
 
 > return
 
-Get data or [dingtalk error] from Dingtalk Open API.
+Get data or throw [dingtalk error] from Dingtalk Open API.
 
 ### callback(ctx)
 
@@ -66,7 +71,7 @@ const config = {
 const dingtalk = new Dingtalk(config);
 const request = {
   url: '/user/getuserinfo',
-  data: { code: 'authcode' },
+  body: { code: 'authcode' },
 };
 dingtalk
   .execute(request)
@@ -94,7 +99,6 @@ module.exports = app => {
 Create `.env` in project root.
 
 ```ini
-baseUrl = https://oapi.dingtalk.com
 appKey = APP_KEY
 appSecret = APP_SECRET
 ```
@@ -110,10 +114,14 @@ appSecret = APP_SECRET
 yarn dev
 ```
 
+## TODO
+
+- Assertion Testing
+
 > Yueming Fang
 
-[urllib]: https://github.com/node-modules/urllib
+[axios]: https://github.com/axios/axios
+[cache-manager]: https://github.com/BryanDonovan/node-cache-manager
 [dingtalk open api]: https://oapi.dingtalk.com
 [dingtalk error]: https://ding-doc.dingtalk.com/doc#/faquestions/rftpfg
 [dingtalk callback]: https://ding-doc.dingtalk.com/doc#/serverapi3/igq88i
-[cache-manager]: https://github.com/BryanDonovan/node-cache-manager
