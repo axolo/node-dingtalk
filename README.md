@@ -2,23 +2,34 @@
 
 Dingtalk OpenAPI SDK for Node.js.
 
+## Install
+
+```bash
+yarn add @axolo/node-dingtalk
+```
+
 ## API
 
 ### constructor(config)
 
 > params
 
-|       config        | required |                          description                           |
-| ------------------- | :------: | -------------------------------------------------------------- |
-| appKey              |   yes    | appKey or suiteKey of ISV app                                  |
-| appSecret           |   yes    | appSecret or suiteSecret of ISV app                            |
-| appMode             |          | `corp` = corp internal app, `isv` = ISV app, default to `corp` |
-| appType             |          | `eapp` = mini app, `h5` = web app, default to `eapp`           |
-| cache               |          | [cache-manager] setting for acccess token and jsapi ticket     |
-| axios               |          | HTTP Client, use [axios]                                       |
-| baseUrl             |          | base url of [dingtalk open api]                                |
-| corpAppAuthTokenUrl |          | corp internal app get access token url                         |
-| isvAppAuthTokenUrl  |          | ISV app get access token url                                   |
+|       config        | mode  |                          description                           |
+| ------------------- | :---: | -------------------------------------------------------------- |
+| baseUrl             |       | base url, default [dingtalk open api]                          |
+| corpAppAuthTokenUrl |       | corp internal app get access token url                         |
+| isvAppAuthTokenUrl  |       | isv app get access token url                                   |
+| cache               |       | [cache-manager] setting for acccess token and jsapi ticket     |
+| axios               |       | HTTP Client, use [axios]                                       |
+| appMode             |       | `corp` = corp internal app, `isv` = isv app, default to `corp` |
+| appType             |       | `eapp` = mini app, `h5` = web app, default to `eapp`           |
+| appKey              | corp  | appKey                                                         |
+| appSecret           | crop  | appSecret                                                      |
+| suiteKey            |  isv  | suiteKey                                                       |
+| suiteSecret         |  isv  | suiteSecret                                                    |
+| encryptToken        |  isv  | encrypt token for Dingtalk HTTP callback                       |
+| encryptKey          |  isv  | encrypt key for Dingtalk HTTP callback                         |
+
 > return
 
 A instance of `Dingtalk` Node.js SDK.
@@ -64,11 +75,14 @@ Response encrypt data of decrypt request.
 ### request
 
 ```js
+const DingtalkSdk = require('@axolo/node-dingtalk');
+
 const config = {
   appKey: 'APP_KEY',
   appSecret: 'APP_SECRET',
 };
-const dingtalk = new Dingtalk(config);
+const dingtalkSdk = new DingtalkSdk(config);
+
 const request = {
   url: '/user/getuserinfo',
   body: { code: 'authcode' },

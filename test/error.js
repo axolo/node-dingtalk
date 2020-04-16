@@ -1,7 +1,6 @@
 'use strict';
 
 // error
-const DingtalkError = require('../src/lib/dingtalk-error');
-const error = new DingtalkError('test error');
-console.log(error.name);
+const DingtalkSdkError = require('../src/error');
+const error = new DingtalkSdkError('test error');
 throw error;
