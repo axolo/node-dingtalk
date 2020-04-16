@@ -44,13 +44,13 @@ class DingtalkSdk {
   /**
    * **设置缓存**
    *
-   * mode | prefix   | type        | app      | corp
-   * -----|----------|-------------|----------|-----
-   * corp | dingtalk | accessToken | appKey   |
-   * corp | dingtalk | jsapiTicket | appKey   |
-   * isv  | dingtalk | suiteTicket | suiteKey |
-   * isv  | dingtalk | accessToken | suiteKey | corpId
-   * isv  | dingtalk | jsapiTicket | suiteKey | corpId
+   * mode | prefix   | type        | suffix
+   * -----|----------|-------------|----------
+   * corp | dingtalk | accessToken | appKey
+   * corp | dingtalk | jsapiTicket | accessToken
+   * isv  | dingtalk | suiteTicket | suiteKey
+   * isv  | dingtalk | accessToken | suiteKey.corpId
+   * isv  | dingtalk | jsapiTicket | accessToken
    *
    * @param {string} key      键
    * @param {any} val         值
@@ -85,10 +85,10 @@ class DingtalkSdk {
     const cacheValue = await this.getCache(cacheKey);
     if (cacheValue) return cacheValue;
     const params = { appkey: appKey, appsecret: appSecret };
-    const { data: token } = await this.axios({ url, params });
-    if (!token) throw new DingtalkSdkError('get dingtalk access token failed');
-    if (token.errcode) throw new DingtalkSdkError(JSON.stringify(token));
-    const { access_token, expires_in } = token;
+    const { data: result } = await this.axios({ url, params });
+    if (!result) throw new DingtalkSdkError('get access token failed');
+    if (result.errcode) throw new DingtalkSdkError(JSON.stringify(result));
+    const { access_token, expires_in } = result;
     await this.setCache(cacheKey, access_token, { ttl: expires_in });
     return access_token;
   }
@@ -128,6 +128,13 @@ class DingtalkSdk {
     return sign.digest('base64');
   }
 
+  /**
+   * **获取第三方企业应用授权企业令牌**
+   *
+   * @param {object} { suiteKey, suiteSecret, corpId } 参数
+   * @return {string} access_token，授权企业令牌
+   * @memberof DingtalkSdk
+   */
   async getIsvAppToken({ suiteKey, suiteSecret, corpId }) {
     const { config } = this;
     const { isvAppAuthTokenUrl: url, cache } = config;
@@ -140,10 +147,10 @@ class DingtalkSdk {
     const method = 'POST';
     const params = { accessKey: suiteKey, timestamp, suiteTicket, signature };
     const data = { auth_corpid: corpId };
-    const { data: token } = await this.axios({ url, params, method, data });
-    if (!token) throw new DingtalkSdkError('get dingtalk access token failed');
-    if (token.errcode) throw new DingtalkSdkError(JSON.stringify(token));
-    const { access_token, expires_in } = token;
+    const { data: result } = await this.axios({ url, params, method, data });
+    if (!result) throw new DingtalkSdkError('get access token failed');
+    if (result.errcode) throw new DingtalkSdkError(JSON.stringify(result));
+    const { access_token, expires_in } = result;
     await this.setCache(cacheKey, access_token, { ttl: expires_in });
     return access_token;
   }
@@ -211,20 +218,28 @@ class DingtalkSdk {
     return result;
   }
 
-  async jsapiTicket(ctx, next) {
-    await next();
-    console.log(ctx);
-    ctx.body = 'jsapi ticket';
+  async getJsapiTicket({ accessToken, type = 'jsapi' }) {
+    const { config } = this;
+    const { jsapiTicketUrl: url, cache } = config;
+    const cacheKey = [ cache.prefix, 'jsapiTicket', accessToken ].join('.');
+    const cacheValue = await this.getCache(cacheKey);
+    if (cacheValue) return cacheValue;
+    const params = { access_token: accessToken, type };
+    const { data: result } = await this.axios({ url, params });
+    if (!result) throw new DingtalkSdkError('get jsapi ticket failed');
+    if (result.errcode) throw new DingtalkSdkError(JSON.stringify(result));
+    const { ticket, expires_in } = result;
+    await this.setCache(cacheKey, ticket, { ttl: expires_in });
+    return ticket;
   }
 
-  async callback(ctx, next) {
-    await next();
-    console.log(ctx);
+  async callback(biz) {
+    console.log(biz);
     // TODO:
     // 1. response encrypt message to dingtalk
     // 2. set suite ticket to cache for getSuiteTicket
     // 3. parse biz data of biz id and biz type
-    ctx.body = 'success';
+    return biz;
   }
 }
 

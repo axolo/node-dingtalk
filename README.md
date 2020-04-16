@@ -53,19 +53,18 @@ more request options see [axios].
 
 Get data or throw [dingtalk error] from Dingtalk Open API.
 
-### callback(ctx)
+### callback({ signature, timestamp, nonce, encrypt })
 
-This method use as middleware usualy. See [dingtalk callback] for help.
+See [dingtalk callback] for help. This method use as middleware usualy.
 
 > params
 
-|           ctx           |   description    |
-| ----------------------- | ---------------- |
-| method                  | `POST`           |
-| request.query.signature | signature string |
-| request.query.timestamp | timestamp        |
-| request.query.nonce     | nonce string     |
-| request.body.encrypt    | encrypt string   |
+|  params   |   description    |
+| --------- | ---------------- |
+| signature | signature string |
+| timestamp | timestamp        |
+| nonce     | nonce string     |
+| encrypt   | encrypt string   |
 
 > return
 
@@ -94,21 +93,6 @@ dingtalk
   .then(res => console.log(res));
 ```
 
-### callback
-
-A middleware of Egg.js.
-
-```js
-// router.js
-// const dingtalk = new Dingtalk(config);
-module.exports = app => {
-  const { router } = app;
-  router.post('/dingtalk/callback', ctx => dingtalk.callback(ctx));
-}
-```
-
-### jsapiTicket
-
 ## Test
 
 ### config
@@ -116,19 +100,28 @@ module.exports = app => {
 Create `.env` in project root.
 
 ```ini
+## corp app
+# appMode = corp
+# appType = eapp
 appKey = APP_KEY
 appSecret = APP_SECRET
-```
 
-| appType |  appKey  |  appSecret  |
-| ------- | -------- | ----------- |
-| corp    | appKey   | appSecret   |
-| isv     | suiteKey | suiteSecret |
+## isv app
+appMode = isv
+appType = h5
+suiteKey = SUITE_KEY
+suiteSecret = SUITE_SECRET
+# get corpId and appId from querystring or dingtalk-jsapi
+corpId = CROP_ID
+appId = APP_ID
+```
 
 ### run
 
 ```bash
 yarn dev
+# or unit test
+node ./test/unit-test.js
 ```
 
 ## TODO
