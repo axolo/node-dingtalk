@@ -12,6 +12,7 @@ class DingtalkSdk {
       baseUrl: 'https://oapi.dingtalk.com',
       corpAppAuthTokenUrl: 'https://oapi.dingtalk.com/gettoken',
       isvAppAuthTokenUrl: 'https://oapi.dingtalk.com/service/get_corp_token',
+      isvAppAuthCorpUrl: 'https://oapi.dingtalk.com/service/get_auth_info',
       suiteTicket: 'suiteTicket',
       cache: { store: 'memory', prefix: 'dingtalk' },
       axios,
@@ -163,6 +164,20 @@ class DingtalkSdk {
     // 2. save suite ticket to cache
     // 3. parse biz data of biz id and biz type
     ctx.body = 'success';
+  }
+
+  async getAuthCorpInfo({ suiteKey, suiteSecret, corpId }) {
+    const { config } = this;
+    const { isvAppAuthCorpUrl: url } = config;
+    const timestamp = Date.now();
+    const suiteTicket = await this.getSuiteTicket(suiteKey);
+    const signature = await this.getSignature(timestamp, suiteTicket, suiteSecret);
+    const method = 'POST';
+    const params = { accessKey: suiteKey, timestamp, suiteTicket, signature };
+    const data = { auth_corpid: corpId };
+    const { data: result } = await this.axios({ url, params, method, data });
+    if (result.errcode) throw new DingtalkSdkError(JSON.stringify(result));
+    return result;
   }
 }
 

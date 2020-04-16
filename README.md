@@ -19,6 +19,7 @@ yarn add @axolo/node-dingtalk
 | baseUrl             |       | base url, default [dingtalk open api]                          |
 | corpAppAuthTokenUrl |       | corp internal app get access token url                         |
 | isvAppAuthTokenUrl  |       | isv app get access token url                                   |
+| isvAppAuthCorpUrl   |       | isv app get auth corp info url                                 |
 | cache               |       | [cache-manager] setting for acccess token and jsapi ticket     |
 | axios               |       | HTTP Client, use [axios]                                       |
 | appMode             |       | `corp` = corp internal app, `isv` = isv app, default to `corp` |
