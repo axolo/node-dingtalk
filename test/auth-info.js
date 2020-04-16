@@ -8,6 +8,6 @@ const dingtalkSdk = new DingtalkSdk(config);
 // access token cache
 const { suiteKey, suiteSecret } = config;
 const corpId = 'dinge949e272101485d935c2f4657eb6378f';
-dingtalkSdk.getAuthCorpInfo({ suiteKey, suiteSecret, corpId })
+dingtalkSdk.getAuthInfo({ suiteKey, suiteSecret, corpId })
   .catch(err => console.log(err))
   .then(res => console.log(res));

@@ -61,7 +61,7 @@ This method use as middleware usualy. See [dingtalk callback] for help.
 
 |           ctx           |   description    |
 | ----------------------- | ---------------- |
-| method                  | cloud be `POST`  |
+| method                  | `POST`           |
 | request.query.signature | signature string |
 | request.query.timestamp | timestamp        |
 | request.query.nonce     | nonce string     |
@@ -107,6 +107,8 @@ module.exports = app => {
 }
 ```
 
+### jsapiTicket
+
 ## Test
 
 ### config
@@ -140,3 +142,4 @@ yarn dev
 [dingtalk open api]: https://oapi.dingtalk.com
 [dingtalk error]: https://ding-doc.dingtalk.com/doc#/faquestions/rftpfg
 [dingtalk callback]: https://ding-doc.dingtalk.com/doc#/serverapi3/igq88i
+[dingtalk jsapi ticket]: https://ding-doc.dingtalk.com/doc#/dev/uwa7vs

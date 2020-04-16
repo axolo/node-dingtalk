@@ -9,13 +9,15 @@ const DingtalkSdkError = require('./error');
 class DingtalkSdk {
   constructor(config) {
     const defaultConfig = {
+      axios,
+      cache: { store: 'memory', prefix: 'dingtalk' },
+      suiteTicket: 'suiteTicket',
       baseUrl: 'https://oapi.dingtalk.com',
+      jsapiTicketUrl: 'https://oapi.dingtalk.com/get_jsapi_ticket',
       corpAppAuthTokenUrl: 'https://oapi.dingtalk.com/gettoken',
       isvAppAuthTokenUrl: 'https://oapi.dingtalk.com/service/get_corp_token',
-      isvAppAuthCorpUrl: 'https://oapi.dingtalk.com/service/get_auth_info',
-      suiteTicket: 'suiteTicket',
-      cache: { store: 'memory', prefix: 'dingtalk' },
-      axios,
+      isvAppAuthInfoUrl: 'https://oapi.dingtalk.com/service/get_auth_info',
+      isvAppAgentUrl: 'https://oapi.dingtalk.com/service/get_agent',
     };
     this.config = deepmerge(defaultConfig, config);
     this.axios = this.config.axios;
@@ -42,10 +44,13 @@ class DingtalkSdk {
   /**
    * **设置缓存**
    *
-   * mode | prefix   | app      | type
-   * -----|----------|----------|-----
-   * corp | dingtalk | appKey   | accessToken, jsapiTicket
-   * isv  | dingtalk | suiteKey | suiteTicket, corpId.accessToken, corpId.jsapiTicket
+   * mode | prefix   | type        | app      | corp
+   * -----|----------|-------------|----------|-----
+   * corp | dingtalk | accessToken | appKey   |
+   * corp | dingtalk | jsapiTicket | appKey   |
+   * isv  | dingtalk | suiteTicket | suiteKey |
+   * isv  | dingtalk | accessToken | suiteKey | corpId
+   * isv  | dingtalk | jsapiTicket | suiteKey | corpId
    *
    * @param {string} key      键
    * @param {any} val         值
@@ -70,15 +75,15 @@ class DingtalkSdk {
    * **获取钉钉企业内部应用令牌**
    *
    * @param {object} { appKey, appSecret }，企业应用appKey, appSecret
-   * @return {object} {access_token, expires_in }，包含过期时长的令牌
+   * @return {string} access_token，企业内部应用令牌
    * @memberof DingtalkSdk
    */
   async getCorpAppToken({ appKey, appSecret }) {
     const { config } = this;
     const { corpAppAuthTokenUrl: url, cache } = config;
-    const cacheKey = [ cache.prefix, appKey, 'accessToken' ].join('.');
-    const cacheToken = await this.getCache(cacheKey);
-    if (cacheToken) return cacheToken;
+    const cacheKey = [ cache.prefix, 'accessToken', appKey ].join('.');
+    const cacheValue = await this.getCache(cacheKey);
+    if (cacheValue) return cacheValue;
     const params = { appkey: appKey, appsecret: appSecret };
     const { data: token } = await this.axios({ url, params });
     if (!token) throw new DingtalkSdkError('get dingtalk access token failed');
@@ -88,10 +93,22 @@ class DingtalkSdk {
     return access_token;
   }
 
+  /**
+   * **获取套件票据**
+   *
+   * 套件票据从推送{@link DingtalkSdk#callback}获取，应对其缓存
+   *
+   * @param {string} suiteKey suiteKey
+   * @return {string} suiteTicket
+   * @memberof DingtalkSdk
+   */
   async getSuiteTicket(suiteKey) {
-    // get suite ticket from cache set by callback
     const { config } = this;
-    const { suiteTicket } = config;
+    const { suiteTicket, cache } = config;
+    // get suite ticket from cache set by callback
+    const cacheKey = [ cache.prefix, 'suiteTicket', suiteKey ].join('.');
+    const cacheValue = await this.getCache(cacheKey);
+    if (cacheValue) return cacheValue;
     return [ suiteKey, suiteTicket ].join('.');
   }
 
@@ -114,9 +131,9 @@ class DingtalkSdk {
   async getIsvAppToken({ suiteKey, suiteSecret, corpId }) {
     const { config } = this;
     const { isvAppAuthTokenUrl: url, cache } = config;
-    const cacheKey = [ cache.prefix, suiteKey, corpId, 'accessToken' ].join('.');
-    const cacheToken = await this.getCache(cacheKey);
-    if (cacheToken) return cacheToken;
+    const cacheKey = [ cache.prefix, 'accessToken', suiteKey, corpId ].join('.');
+    const cacheValue = await this.getCache(cacheKey);
+    if (cacheValue) return cacheValue;
     const timestamp = Date.now();
     const suiteTicket = await this.getSuiteTicket(suiteKey);
     const signature = await this.getSignature(timestamp, suiteTicket, suiteSecret);
@@ -131,6 +148,15 @@ class DingtalkSdk {
     return access_token;
   }
 
+  /**
+   * **获取令牌**
+   *
+   * 根据参数获取企业内部应用令牌或第三方企业应用令牌
+   *
+   * @param {object} options 参数
+   * @return {string} 令牌
+   * @memberof DingtalkSdk
+   */
   async getToken(options) {
     const { appMode } = options;
     switch (appMode) {
@@ -147,7 +173,7 @@ class DingtalkSdk {
     }
   }
 
-  async execute(request = {}) {
+  async execute(request) {
     const { config } = this;
     const { appKey, appSecret, baseUrl } = config;
     const access_token = await this.getToken({ appKey, appSecret });
@@ -157,18 +183,9 @@ class DingtalkSdk {
     return response;
   }
 
-  async callback(ctx) {
-    console.log(ctx);
-    // TODO:
-    // 1. response encrypt message to dingtalk
-    // 2. save suite ticket to cache
-    // 3. parse biz data of biz id and biz type
-    ctx.body = 'success';
-  }
-
-  async getAuthCorpInfo({ suiteKey, suiteSecret, corpId }) {
+  async getAuthInfo({ suiteKey, suiteSecret, corpId }) {
     const { config } = this;
-    const { isvAppAuthCorpUrl: url } = config;
+    const { isvAppAuthInfoUrl: url } = config;
     const timestamp = Date.now();
     const suiteTicket = await this.getSuiteTicket(suiteKey);
     const signature = await this.getSignature(timestamp, suiteTicket, suiteSecret);
@@ -178,6 +195,36 @@ class DingtalkSdk {
     const { data: result } = await this.axios({ url, params, method, data });
     if (result.errcode) throw new DingtalkSdkError(JSON.stringify(result));
     return result;
+  }
+
+  async getAgent({ suiteKey, suiteSecret, corpId, agentId }) {
+    const { config } = this;
+    const { isvAppAgentUrl: url } = config;
+    const timestamp = Date.now();
+    const suiteTicket = await this.getSuiteTicket(suiteKey);
+    const signature = await this.getSignature(timestamp, suiteTicket, suiteSecret);
+    const method = 'POST';
+    const params = { accessKey: suiteKey, timestamp, suiteTicket, signature };
+    const data = { suite_key: suiteKey, auth_corpid: corpId, agentid: parseInt(agentId) };
+    const { data: result } = await this.axios({ url, params, method, data });
+    if (result.errcode) throw new DingtalkSdkError(JSON.stringify(result));
+    return result;
+  }
+
+  async jsapiTicket(ctx, next) {
+    await next();
+    console.log(ctx);
+    ctx.body = 'jsapi ticket';
+  }
+
+  async callback(ctx, next) {
+    await next();
+    console.log(ctx);
+    // TODO:
+    // 1. response encrypt message to dingtalk
+    // 2. set suite ticket to cache for getSuiteTicket
+    // 3. parse biz data of biz id and biz type
+    ctx.body = 'success';
   }
 }
 
