@@ -14,22 +14,35 @@ yarn add @axolo/node-dingtalk
 
 > params
 
-|       config        | mode  |                          description                           |
-| ------------------- | :---: | -------------------------------------------------------------- |
-| baseUrl             |       | base url, default [dingtalk open api]                          |
-| corpAppAuthTokenUrl |       | corp internal app get access token url                         |
-| isvAppAuthTokenUrl  |       | isv app get access token url                                   |
-| isvAppAuthCorpUrl   |       | isv app get auth corp info url                                 |
-| cache               |       | [cache-manager] setting for acccess token and jsapi ticket     |
-| axios               |       | HTTP Client, use [axios]                                       |
-| appMode             |       | `corp` = corp internal app, `isv` = isv app, default to `corp` |
-| appType             |       | `eapp` = mini app, `h5` = web app, default to `eapp`           |
-| appKey              | corp  | appKey                                                         |
-| appSecret           | crop  | appSecret                                                      |
-| suiteKey            |  isv  | suiteKey                                                       |
-| suiteSecret         |  isv  | suiteSecret                                                    |
-| eventToken          |       | encrypt token of Dingtalk Event HTTP callback                  |
-| eventAesKey         |       | encrypt aesKey of Dingtalk Event HTTP callback                 |
+#### corp app
+
+|       config        | required | default |                 description                 |
+| ------------------- | :------: | :-----: | ------------------------------------------- |
+| appKey              |   true   |         | appKey                                      |
+| appSecret           |   true   |         | appSecret                                   |
+| appMode             |          | `corp`  | `corp` = corp internal app, `isv` = isv app |
+| appType             |          | `eapp`  | `eapp` = mini app, `h5` = web app           |
+| baseUrl             |          | builtin | base url of [dingtalk open api]             |
+| corpAppAuthTokenUrl |          | builtin | get access token url                        |
+| cache               |          | builtin | cache setting, use [cache-manager]          |
+| axios               |          | builtin | HTTP Client, use [axios]                    |
+
+#### isv app
+
+|       config       | required | default |                 description                 |
+| ------------------ | :------: | :-----: | ------------------------------------------- |
+| suiteKey           |   true   |         | suiteKey                                    |
+| suiteSecret        |   true   |         | suiteSecret                                 |
+| eventToken         |   true   |         | [dingtalk callback] encrypt token           |
+| eventAesKey        |   true   |         | [dingtalk callback] encrypt aesKey          |
+| appMode            |  `isv`   | `corp`  | `corp` = corp internal app, `isv` = isv app |
+| appType            |          | `eapp`  | `eapp` = mini app, `h5` = web app           |
+| baseUrl            |          | builtin | base url of [dingtalk open api]             |
+| isvAppAuthTokenUrl |          | builtin | get access token url                        |
+| isvAppAuthInfoUrl  |          | builtin | get auth info url                           |
+| isvAppAgentUrl     |          | builtin | get agent info url                          |
+| cache              |          | builtin | cache setting, use [cache-manager]          |
+| axios              |          | builtin | HTTP Client, use [axios]                    |
 
 > return
 
@@ -51,11 +64,12 @@ more request options see [axios].
 
 > return
 
-Get data or throw [dingtalk error] from Dingtalk Open API.
+Get data or throw [dingtalk error] from Dingtalk OpenAPI.
 
 ### callback({ signature, timestamp, nonce, encrypt })
 
-See [dingtalk callback] for help. This method use as middleware usualy.
+See [dingtalk callback] for help.
+This method use as middleware usualy.
 
 > params
 
@@ -102,13 +116,19 @@ dingtalk
 
 Create `.env` in project root.
 
+> corp app
+
 ```ini
 ## corp app
 # appMode = corp
 # appType = eapp
 appKey = APP_KEY
 appSecret = APP_SECRET
+```
 
+> isv app
+
+```ini
 ## isv app
 appMode = isv
 appType = h5
@@ -133,7 +153,8 @@ node ./test/config.test.js
 
 ## TODO
 
-- class: DingtalkSdkCache
+- class: `DingtalkSdkCache`
+- cache: use `Redis`, `MySQL`, etc.
 - test: Assertion Testing
 
 ## Thanks
