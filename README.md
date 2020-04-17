@@ -28,8 +28,8 @@ yarn add @axolo/node-dingtalk
 | appSecret           | crop  | appSecret                                                      |
 | suiteKey            |  isv  | suiteKey                                                       |
 | suiteSecret         |  isv  | suiteSecret                                                    |
-| encryptToken        |  isv  | encrypt token for Dingtalk HTTP callback                       |
-| encryptKey          |  isv  | encrypt key for Dingtalk HTTP callback                         |
+| eventToken          |       | encrypt token of Dingtalk Event HTTP callback                  |
+| eventAesKey         |       | encrypt aesKey of Dingtalk Event HTTP callback                 |
 
 > return
 
@@ -62,13 +62,16 @@ See [dingtalk callback] for help. This method use as middleware usualy.
 |  params   |   description    |
 | --------- | ---------------- |
 | signature | signature string |
-| timestamp | timestamp        |
+| timestamp | timestamp string |
 | nonce     | nonce string     |
 | encrypt   | encrypt string   |
 
 > return
 
-Response encrypt data of decrypt request.
+|  params  |           description           |
+| -------- | ------------------------------- |
+| event    | event decrypted of callback     |
+| response | response encrypted for callback |
 
 ## Example
 
@@ -111,6 +114,8 @@ appMode = isv
 appType = h5
 suiteKey = SUITE_KEY
 suiteSecret = SUITE_SECRET
+eventToken = EVENT_TOKEN
+eventAesKey = EVENT_AES_KEY
 # get corpId and appId from dingtalk-jsapi or querystring
 corpId = CROP_ID
 appId = APP_ID
@@ -123,13 +128,13 @@ appId = APP_ID
 yarn test
 # or run unit test by sigle file, like
 # test config
-node ./test/config.js
+node ./test/config.test.js
 ```
 
 ## TODO
 
-- DingtalkSdkCache
-- Assertion Testing
+- class: DingtalkSdkCache
+- test: Assertion Testing
 
 ## Thanks
 

@@ -1,22 +1,24 @@
 {
   "name": "@axolo/node-dingtalk",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Dingtalk OpenAPI Node.js SDK.",
   "main": "src/index.js",
   "scripts": {
-    "test": "node test"
-  },
-  "devDependencies": {
-    "dotenv": "^8.2.0",
-    "eslint": "^6.8.0",
-    "eslint-config-egg": "^8.0.1",
-    "nodemon": "^2.0.3"
+    "test": "node ./test/execute.test.js"
   },
   "dependencies": {
     "axios": "^0.19.2",
     "cache-manager": "^3.2.1",
     "deepmerge": "^4.2.2",
     "dingtalk-encrypt": "^1.2.1"
+  },
+  "devDependencies": {
+    "body-parser": "^1.19.0",
+    "dotenv": "^8.2.0",
+    "eslint": "^6.8.0",
+    "eslint-config-egg": "^8.0.1",
+    "express": "^4.17.1",
+    "nodemon": "^2.0.3"
   },
   "files": [
     "src"

@@ -5,6 +5,7 @@ const axios = require('axios');
 const cacheManager = require('cache-manager');
 const deepmerge = require('deepmerge');
 const DingtalkSdkError = require('./error');
+const DingtalkSdkEvent = require('./event');
 
 class DingtalkSdk {
   constructor(config) {
@@ -12,7 +13,6 @@ class DingtalkSdk {
       axios,
       cache: { store: 'memory', prefix: 'dingtalk' },
       suiteTicket: 'suiteTicket', // 测试应用可为任意字符串
-      callbackSuccess: 'success', // 回调成功加密字符串
       baseUrl: 'https://oapi.dingtalk.com',
       jsapiTicketUrl: 'https://oapi.dingtalk.com/get_jsapi_ticket',
       corpAppAuthTokenUrl: 'https://oapi.dingtalk.com/gettoken',
@@ -183,16 +183,6 @@ class DingtalkSdk {
     }
   }
 
-  async execute(request) {
-    const { config } = this;
-    const { appKey, appSecret, baseUrl } = config;
-    const access_token = await this.getToken({ appKey, appSecret });
-    const url = baseUrl + request.url;
-    const options = deepmerge(request, { url, params: { access_token } });
-    const { data: response } = await this.axios(options);
-    return response;
-  }
-
   async getJsapiTicket({ accessToken, type = 'jsapi' }) {
     const { config } = this;
     const { jsapiTicketUrl: url, cache } = config;
@@ -241,13 +231,36 @@ class DingtalkSdk {
     return agentid;
   }
 
-  async callback(biz) {
-    console.log(biz);
-    // TODO:
-    // 1. response encrypt message to dingtalk
-    // 2. set suite ticket to cache for getSuiteTicket
-    // 3. parse biz data of biz id and biz type
-    return biz;
+  async execute(request) {
+    const { config } = this;
+    const { appKey, appSecret, baseUrl } = config;
+    const access_token = await this.getToken({ appKey, appSecret });
+    const url = baseUrl + request.url;
+    const options = deepmerge(request, { url, params: { access_token } });
+    const { data: response } = await this.axios(options);
+    return response;
+  }
+
+  async callback(request) {
+    const { appMode, appKey, suiteKey, eventToken, eventAesKey } = this.config;
+    const key = appMode === 'isv' ? suiteKey : appKey;
+    const dingtalkSdkEvent = new DingtalkSdkEvent({ token: eventToken, aesKey: eventAesKey, key });
+    const event = await dingtalkSdkEvent.parse(request);
+    const { EventType } = event;
+    switch (EventType) {
+      default: break;
+      // update suiteTicket in cache
+      case 'suite_ticket': {
+        const { SuiteKey, SuiteTicket } = event;
+        const { cache } = this.config;
+        const cacheKey = [ cache.prefix, 'suiteTicket', SuiteKey ].join('.');
+        await this.setCache(cacheKey, SuiteTicket);
+        console.log(__filename, { [cacheKey]: await this.getCache(cacheKey) });
+      }
+    }
+    const { timestamp } = request;
+    const response = dingtalkSdkEvent.response({ timestamp });
+    return { event, response };
   }
 }
 
