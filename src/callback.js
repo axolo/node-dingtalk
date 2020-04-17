@@ -1,7 +1,7 @@
 'use strict';
 
-class Callback {
+class DintalkSdkCallback {
 
 }
 
-module.exports = Callback;
+module.exports = DintalkSdkCallback;

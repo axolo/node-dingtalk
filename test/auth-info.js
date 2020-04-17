@@ -4,10 +4,8 @@ const DingtalkSdk = require('../src');
 const { parsed: config } = require('dotenv').config();
 
 const dingtalkSdk = new DingtalkSdk(config);
+const { suiteKey, suiteSecret, corpId } = config;
 
-// access token cache
-const { suiteKey, suiteSecret } = config;
-const corpId = 'dinge949e272101485d935c2f4657eb6378f';
 dingtalkSdk.getAuthInfo({ suiteKey, suiteSecret, corpId })
   .catch(err => console.log(err))
   .then(res => console.log(res));

@@ -5,7 +5,6 @@ const { parsed: config } = require('dotenv').config();
 
 const dingtalkSdk = new DingtalkSdk(config);
 
-// execute
 dingtalkSdk.execute({
   url: '/user/simplelist',
   params: { department_id: 1 },

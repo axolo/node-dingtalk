@@ -1,11 +1,10 @@
 {
   "name": "@axolo/node-dingtalk",
   "version": "0.0.2",
-  "description": "Dingtalk OpenAPI SDK for Node.js.",
+  "description": "Dingtalk OpenAPI Node.js SDK.",
   "main": "src/index.js",
   "scripts": {
-    "dev": "nodemon test",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node test"
   },
   "devDependencies": {
     "dotenv": "^8.2.0",

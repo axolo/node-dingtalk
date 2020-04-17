@@ -4,8 +4,7 @@ const DingtalkSdk = require('../src');
 const { parsed: config } = require('dotenv').config();
 
 const dingtalkSdk = new DingtalkSdk(config);
-
-const { suiteKey, suiteSecret, corpId } = config;
+const { suiteKey, suiteSecret, corpId, appId } = config;
 
 dingtalkSdk.getIsvAppToken({
   suiteKey,
@@ -14,12 +13,13 @@ dingtalkSdk.getIsvAppToken({
 }).catch(err => {
   console.log(err);
 }).then(accessToken => {
-  console.log({ accessToken });
-  dingtalkSdk.getJsapiTicket({
-    accessToken,
-  }).catch(err => {
+  const ticket = dingtalkSdk.getJsapiTicket({ accessToken });
+  const auth = dingtalkSdk.getAuthInfo({ suiteKey, suiteSecret, corpId });
+  Promise.all([ ticket, auth ]).catch(err => {
     console.log(err);
-  }).then(jsapiTicket => {
-    console.log({ jsapiTicket });
+  }).then(([ jsapiTicket, authInfo ]) => {
+    const { auth_info: { agent } } = authInfo;
+    const agentId = dingtalkSdk.getAgentId(agent, parseInt(appId));
+    console.log({ jsapiTicket, agentId });
   });
 });

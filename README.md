@@ -1,6 +1,6 @@
 # node-dingtalk
 
-Dingtalk OpenAPI SDK for Node.js.
+Dingtalk OpenAPI Node.js SDK.
 
 ## Install
 
@@ -33,7 +33,7 @@ yarn add @axolo/node-dingtalk
 
 > return
 
-A instance of `Dingtalk` Node.js SDK.
+A instance of `Dingtalk` OpenAPI Node.js SDK.
 
 ### execute(request)
 
@@ -111,7 +111,7 @@ appMode = isv
 appType = h5
 suiteKey = SUITE_KEY
 suiteSecret = SUITE_SECRET
-# get corpId and appId from querystring or dingtalk-jsapi
+# get corpId and appId from dingtalk-jsapi or querystring
 corpId = CROP_ID
 appId = APP_ID
 ```
@@ -119,14 +119,21 @@ appId = APP_ID
 ### run
 
 ```bash
-yarn dev
-# or unit test
-node ./test/unit-test.js
+# test DingtalkSdk.execute
+yarn test
+# or run unit test by sigle file, like
+# test config
+node ./test/config.js
 ```
 
 ## TODO
 
+- DingtalkSdkCache
 - Assertion Testing
+
+## Thanks
+
+- [dingtalk-encrypt](https://github.com/elixirChain/dingtalk-encrypt)
 
 > Yueming Fang
 

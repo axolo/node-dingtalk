@@ -1,7 +1,7 @@
 'use strict';
 
-class DingtalkError extends Error {
-  // TODO: this.name = 'DingtalError';
+class DingtalkSdkError extends Error {
+  // TODO: this.name = 'DingtalSdkError';
 }
 
-module.exports = DingtalkError;
+module.exports = DingtalkSdkError;
