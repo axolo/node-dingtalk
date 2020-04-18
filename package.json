@@ -1,6 +1,6 @@
 {
   "name": "@axolo/node-dingtalk",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Dingtalk OpenAPI Node.js SDK.",
   "main": "src/index.js",
   "scripts": {
@@ -18,6 +18,8 @@
     "eslint": "^6.8.0",
     "eslint-config-egg": "^8.0.1",
     "express": "^4.17.1",
+    "mysql2": "^2.1.0",
+    "node-cron": "^2.0.3",
     "nodemon": "^2.0.3"
   },
   "files": [
@@ -28,8 +30,8 @@
     "url": "git+https://github.com/axolo/node-dingtalk.git"
   },
   "keywords": [
-    "dingtalk",
     "node-dingtalk",
+    "dingtalk",
     "dingtalk-isv",
     "dingding"
   ],

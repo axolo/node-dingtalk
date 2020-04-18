@@ -140,7 +140,7 @@ class DingtalkSdk {
   /**
    * **设置票据套件**
    *
-   * 轮询钉钉云推送RDS数据源获取更新，若`suiteKey`匹配则推送
+   * 比如：轮询钉钉云推送RDS数据源获取更新，若`suiteKey`匹配则推送
    *
    * @see https://ding-doc.dingtalk.com/doc#/ln6dmh/troq7i/k9Zn4
    * @param {string} suiteKey suiteKey
@@ -149,7 +149,7 @@ class DingtalkSdk {
    * @memberof DingtalkSdk
    */
   async setSuiteTicket(suiteKey, suiteTicket) {
-    const { configSuiteKey, cache } = this.config;
+    const { suiteKey: configSuiteKey, cache } = this.config;
     if (suiteKey !== configSuiteKey) throw new DingtalkSdkError('suiteKey not match');
     const cacheKey = [ cache.prefix, 'suiteTicket', suiteKey ].join('.');
     const result = await this.setCache(cacheKey, suiteTicket);

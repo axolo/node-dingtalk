@@ -130,8 +130,6 @@ appSecret = APP_SECRET
 > isv app
 
 ```ini
-## http server for callback listen port 3000 default
-httpPort = 3000
 ## isv app
 appMode = isv
 appType = h5
