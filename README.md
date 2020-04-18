@@ -33,8 +33,9 @@ yarn add @axolo/node-dingtalk
 | ------------------ | :------: | :-----: | ------------------------------------------- |
 | suiteKey           |   true   |         | suiteKey                                    |
 | suiteSecret        |   true   |         | suiteSecret                                 |
-| eventToken         |   true   |         | [dingtalk callback] encrypt token           |
-| eventAesKey        |   true   |         | [dingtalk callback] encrypt aesKey          |
+| suiteId            |   true   |         | [dingtalk cloud push] set suiteTicket       |
+| eventToken         |   true   |         | [http event callback] encrypt token         |
+| eventAesKey        |   true   |         | [http event callback] encrypt aesKey        |
 | appMode            |  `isv`   | `corp`  | `corp` = corp internal app, `isv` = isv app |
 | appType            |          | `eapp`  | `eapp` = mini app, `h5` = web app           |
 | baseUrl            |          | builtin | base url of [dingtalk open api]             |
@@ -68,7 +69,7 @@ Get data or throw [dingtalk error] from Dingtalk OpenAPI.
 
 ### callback({ signature, timestamp, nonce, encrypt })
 
-See [dingtalk callback] for help.
+See [http event callback] for help.
 This method use as middleware usualy.
 
 > params
@@ -129,11 +130,16 @@ appSecret = APP_SECRET
 > isv app
 
 ```ini
+## http server for callback listen port 3000 default
+httpPort = 3000
 ## isv app
 appMode = isv
 appType = h5
 suiteKey = SUITE_KEY
 suiteSecret = SUITE_SECRET
+# suiteId is required of Dingtalk Cloud Push
+suiteId = SUITE_ID
+# eventToken and eventAesKey is required of HTTP Event Callback
 eventToken = EVENT_TOKEN
 eventAesKey = EVENT_AES_KEY
 # get corpId and appId from dingtalk-jsapi or querystring
@@ -151,8 +157,28 @@ yarn test
 node ./test/config.test.js
 ```
 
+## Appendix
+
+### Dingtalk app mode
+
+- corp
+- isv
+- person
+- custom
+
+### Dingtalk app type
+
+- h5
+- eapp
+
+### Dingtalk event push
+
+- HTTP Event Callback
+- Dingtalk Cloud Push
+
 ## TODO
 
+- event: [dingtalk cloud push]
 - class: `DingtalkSdkCache`
 - cache: use `Redis`, `MySQL`, etc.
 - test: Assertion Testing
@@ -167,5 +193,6 @@ node ./test/config.test.js
 [cache-manager]: https://github.com/BryanDonovan/node-cache-manager
 [dingtalk open api]: https://oapi.dingtalk.com
 [dingtalk error]: https://ding-doc.dingtalk.com/doc#/faquestions/rftpfg
-[dingtalk callback]: https://ding-doc.dingtalk.com/doc#/serverapi3/igq88i
+[http event callback]: https://ding-doc.dingtalk.com/doc#/serverapi3/igq88i
 [dingtalk jsapi ticket]: https://ding-doc.dingtalk.com/doc#/dev/uwa7vs
+[dingtalk cloud push]: https://ding-doc.dingtalk.com/doc#/ln6dmh/gnu28b

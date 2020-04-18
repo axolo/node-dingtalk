@@ -22,7 +22,7 @@ class DintalkSdkEvent {
   }
 
   /**
-   * **处理回调**
+   * **解密事件数据**
    *
    * 1. 解密回调数据，返回给应用处理
    * 2. 加密响应数据，反馈给钉钉推送
@@ -32,7 +32,7 @@ class DintalkSdkEvent {
    * @return {object} { event, response }，事件数据及响应数据
    * @memberof DintalkSdkEvent
    */
-  parse({ signature, timestamp, nonce, encrypt }) {
+  decrypt({ signature, timestamp, nonce, encrypt }) {
     try {
       const { crypto } = this;
       const json = crypto.getDecryptMsg(signature, timestamp, nonce, encrypt);

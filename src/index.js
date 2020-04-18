@@ -115,7 +115,9 @@ class DingtalkSdk {
   /**
    * **获取套件票据**
    *
-   * 套件票据从推送{@link DingtalkSdk#callback}获取，应对其缓存
+   * 套件票据推送途径
+   * 1. HTTP Event Callback {@link DingtalkSdk#callback}
+   * 2. Dingtalk Cloud Push {@link https://ding-doc.dingtalk.com/doc#/ln6dmh/gnu28b}
    *
    * @param {string} suiteKey suiteKey
    * @return {string} suiteTicket
@@ -124,7 +126,7 @@ class DingtalkSdk {
   async getSuiteTicket(suiteKey) {
     const { config } = this;
     const { suiteTicket, cache } = config;
-    // get suite ticket from cache set by callback
+    // get suite ticket from cache set by HTTP callback or Dingtalk Cloud Push
     const cacheKey = [ cache.prefix, 'suiteTicket', suiteKey ].join('.');
     const cacheValue = await this.getCache(cacheKey);
     if (cacheValue) return cacheValue;
@@ -233,8 +235,8 @@ class DingtalkSdk {
 
   async execute(request) {
     const { config } = this;
-    const { appKey, appSecret, baseUrl } = config;
-    const access_token = await this.getToken({ appKey, appSecret });
+    const { baseUrl } = config;
+    const access_token = await this.getToken(config);
     const url = baseUrl + request.url;
     const options = deepmerge(request, { url, params: { access_token } });
     const { data: response } = await this.axios(options);
@@ -245,7 +247,7 @@ class DingtalkSdk {
     const { appMode, appKey, suiteKey, eventToken, eventAesKey } = this.config;
     const key = appMode === 'isv' ? suiteKey : appKey;
     const dingtalkSdkEvent = new DingtalkSdkEvent({ token: eventToken, aesKey: eventAesKey, key });
-    const event = await dingtalkSdkEvent.parse(request);
+    const event = await dingtalkSdkEvent.decrypt(request);
     const { EventType } = event;
     switch (EventType) {
       default: break;
@@ -255,7 +257,6 @@ class DingtalkSdk {
         const { cache } = this.config;
         const cacheKey = [ cache.prefix, 'suiteTicket', SuiteKey ].join('.');
         await this.setCache(cacheKey, SuiteTicket);
-        console.log(__filename, { [cacheKey]: await this.getCache(cacheKey) });
       }
     }
     const { timestamp } = request;

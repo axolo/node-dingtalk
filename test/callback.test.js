@@ -20,7 +20,6 @@ app.get('/', (req, res) => res.send('hello world'));
 app.post('/dingtalk/callback', jsonParser, (req, res) => {
   const { signature, timestamp, nonce } = req.query;
   const { encrypt } = req.body;
-  console.log(req.body);
   dingtalkSdk.callback({
     signature,
     timestamp,
@@ -35,6 +34,7 @@ app.post('/dingtalk/callback', jsonParser, (req, res) => {
   });
 });
 
-app.listen(3000);
+const { httpPort = 3000 } = config;
+app.listen(httpPort);
 
-console.log('server is running at http://localhost:3000');
+console.log(`HTTP Server is running at: ${httpPort}`);

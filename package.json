@@ -1,6 +1,6 @@
 {
   "name": "@axolo/node-dingtalk",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Dingtalk OpenAPI Node.js SDK.",
   "main": "src/index.js",
   "scripts": {
