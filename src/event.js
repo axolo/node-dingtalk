@@ -33,14 +33,10 @@ class DintalkSdkEvent {
    * @memberof DintalkSdkEvent
    */
   decrypt({ signature, timestamp, nonce, encrypt }) {
-    try {
-      const { crypto } = this;
-      const json = crypto.getDecryptMsg(signature, timestamp, nonce, encrypt);
-      const event = JSON.parse(json);
-      return event;
-    } catch (err) {
-      throw err;
-    }
+    const { crypto } = this;
+    const json = crypto.getDecryptMsg(signature, timestamp, nonce, encrypt);
+    const event = JSON.parse(json);
+    return event;
   }
 
   /**

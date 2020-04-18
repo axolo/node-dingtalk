@@ -93,6 +93,7 @@ class DingtalkSdk {
   /**
    * **获取钉钉企业内部应用令牌**
    *
+   * @see https://ding-doc.dingtalk.com/doc#/serverapi2/eev437/1b3959fa
    * @param {object} { appKey, appSecret }，企业应用appKey, appSecret
    * @return {string} access_token，企业内部应用令牌
    * @memberof DingtalkSdk
@@ -105,7 +106,7 @@ class DingtalkSdk {
     if (cacheValue) return cacheValue;
     const params = { appkey: appKey, appsecret: appSecret };
     const { data: result } = await this.axios({ url, params });
-    if (!result) throw new DingtalkSdkError('get access token failed');
+    if (!result) throw new DingtalkSdkError('get accessToken failed');
     if (result.errcode) throw new DingtalkSdkError(JSON.stringify(result));
     const { access_token, expires_in } = result;
     await this.setCache(cacheKey, access_token, { ttl: expires_in });
@@ -115,10 +116,14 @@ class DingtalkSdk {
   /**
    * **获取套件票据**
    *
-   * 套件票据推送途径
-   * 1. HTTP Event Callback {@link DingtalkSdk#callback}
-   * 2. Dingtalk Cloud Push {@link https://ding-doc.dingtalk.com/doc#/ln6dmh/gnu28b}
+   * 套件票据更新途径：
    *
+   * 1. HTTP Event Callback {@link DingtalkSdk#callback}
+   * 2. Dingtalk Cloud Push {@link DingtalkSdk#bizSuiteTicket}
+   *
+   * @see https://ding-doc.dingtalk.com/doc#/ln6dmh/troq7i/k9Zn4
+   * @see https://ding-doc.dingtalk.com/doc#/serverapi3/xffxf8
+   * @see https://ding-doc.dingtalk.com/doc#/ln6dmh/gnu28b
    * @param {string} suiteKey suiteKey
    * @return {string} suiteTicket
    * @memberof DingtalkSdk
@@ -126,7 +131,6 @@ class DingtalkSdk {
   async getSuiteTicket(suiteKey) {
     const { config } = this;
     const { suiteTicket, cache } = config;
-    // get suite ticket from cache set by HTTP callback or Dingtalk Cloud Push
     const cacheKey = [ cache.prefix, 'suiteTicket', suiteKey ].join('.');
     const cacheValue = await this.getCache(cacheKey);
     if (cacheValue) return cacheValue;
@@ -134,8 +138,28 @@ class DingtalkSdk {
   }
 
   /**
+   * **设置票据套件**
+   *
+   * 轮询钉钉云推送RDS数据源获取更新，若`suiteKey`匹配则推送
+   *
+   * @see https://ding-doc.dingtalk.com/doc#/ln6dmh/troq7i/k9Zn4
+   * @param {string} suiteKey suiteKey
+   * @param {string} suiteTicket suiteTicket
+   * @return {string} 缓存并返回套件票据
+   * @memberof DingtalkSdk
+   */
+  async setSuiteTicket(suiteKey, suiteTicket) {
+    const { configSuiteKey, cache } = this.config;
+    if (suiteKey !== configSuiteKey) throw new DingtalkSdkError('suiteKey not match');
+    const cacheKey = [ cache.prefix, 'suiteTicket', suiteKey ].join('.');
+    const result = await this.setCache(cacheKey, suiteTicket);
+    return result;
+  }
+
+  /**
    * **获取第三方企业应用授权企业令牌**
    *
+   * @see https://ding-doc.dingtalk.com/doc#/serverapi3/hv357q
    * @param {object} { suiteKey, suiteSecret, corpId } 参数
    * @return {string} access_token，授权企业令牌
    * @memberof DingtalkSdk
@@ -153,7 +177,7 @@ class DingtalkSdk {
     const params = { accessKey: suiteKey, timestamp, suiteTicket, signature };
     const data = { auth_corpid: corpId };
     const { data: result } = await this.axios({ url, params, method, data });
-    if (!result) throw new DingtalkSdkError('get access token failed');
+    if (!result) throw new DingtalkSdkError('get accessToken failed');
     if (result.errcode) throw new DingtalkSdkError(JSON.stringify(result));
     const { access_token, expires_in } = result;
     await this.setCache(cacheKey, access_token, { ttl: expires_in });
@@ -185,6 +209,14 @@ class DingtalkSdk {
     }
   }
 
+  /**
+   * **获取JSAPI票据**
+   *
+   * @see https://ding-doc.dingtalk.com/doc#/dev/uwa7vs
+   * @param {object} { accessToken, type = 'jsapi' }，令牌及票据类型
+   * @return {string} JSAPI票据
+   * @memberof DingtalkSdk
+   */
   async getJsapiTicket({ accessToken, type = 'jsapi' }) {
     const { config } = this;
     const { jsapiTicketUrl: url, cache } = config;
@@ -200,6 +232,14 @@ class DingtalkSdk {
     return ticket;
   }
 
+  /**
+   * **获取企业授权信息**
+   *
+   * @see https://ding-doc.dingtalk.com/doc#/serverapi3/fmdqvx
+   * @param {object} { suiteKey, suiteSecret, corpId }
+   * @return {object} 企业授权信息
+   * @memberof DingtalkSdk
+   */
   async getAuthInfo({ suiteKey, suiteSecret, corpId }) {
     const { config } = this;
     const { isvAppAuthInfoUrl: url } = config;
@@ -214,6 +254,14 @@ class DingtalkSdk {
     return result;
   }
 
+  /**
+   * **获取授权应用信息**
+   *
+   * @ https://ding-doc.dingtalk.com/doc#/serverapi3/vfitg0
+   * @param {object} { suiteKey, suiteSecret, corpId, agentId }
+   * @return {object} 授权应用信息
+   * @memberof DingtalkSdk
+   */
   async getAgent({ suiteKey, suiteSecret, corpId, agentId }) {
     const { config } = this;
     const { isvAppAgentUrl: url } = config;
@@ -228,11 +276,26 @@ class DingtalkSdk {
     return result;
   }
 
+  /**
+   * **获取AgentId**
+   *
+   * @param {array} agents 授权应用列表
+   * @param {string | number} appId 应用ID
+   * @return {string | number} 授权应用ID
+   * @memberof DingtalkSdk
+   */
   getAgentId(agents, appId) {
     const { agentid } = agents.find(agent => agent.appid === appId);
     return agentid;
   }
 
+  /**
+   * **请求API**
+   *
+   * @param {object} request 请求
+   * @return {object} 响应
+   * @memberof DingtalkSdk
+   */
   async execute(request) {
     const { config } = this;
     const { baseUrl } = config;
@@ -243,6 +306,14 @@ class DingtalkSdk {
     return response;
   }
 
+  /**
+   * **处理HTTP事件回调**
+   *
+   * @see https://ding-doc.dingtalk.com/doc#/serverapi3/xffxf8
+   * @param {object} request 加密的事件数据
+   * @return {object} 解密的事件数据
+   * @memberof DingtalkSdk
+   */
   async callback(request) {
     const { appMode, appKey, suiteKey, eventToken, eventAesKey } = this.config;
     const key = appMode === 'isv' ? suiteKey : appKey;
@@ -251,12 +322,10 @@ class DingtalkSdk {
     const { EventType } = event;
     switch (EventType) {
       default: break;
-      // update suiteTicket in cache
-      case 'suite_ticket': {
+      case 'suite_ticket': { // update suiteTicket in cache
         const { SuiteKey, SuiteTicket } = event;
-        const { cache } = this.config;
-        const cacheKey = [ cache.prefix, 'suiteTicket', SuiteKey ].join('.');
-        await this.setCache(cacheKey, SuiteTicket);
+        await this.setSuiteTicket(SuiteKey, SuiteTicket);
+        break;
       }
     }
     const { timestamp } = request;
