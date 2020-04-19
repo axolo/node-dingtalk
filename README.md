@@ -16,34 +16,42 @@ yarn add @axolo/node-dingtalk
 
 #### corp app
 
-|       config        | required | default |                 description                 |
-| ------------------- | :------: | :-----: | ------------------------------------------- |
-| appKey              |   true   |         | appKey                                      |
-| appSecret           |   true   |         | appSecret                                   |
-| appMode             |          | `corp`  | `corp` = corp internal app, `isv` = isv app |
-| appType             |          | `eapp`  | `eapp` = mini app, `h5` = web app           |
-| baseUrl             |          | builtin | base url of [dingtalk open api]             |
-| corpAppAuthTokenUrl |          | builtin | get access token url                        |
-| cache               |          | builtin | cache setting, use [cache-manager]          |
-| axios               |          | builtin | HTTP Client, use [axios]                    |
+|  config   | required | default |                 description                 |
+| --------- | :------: | :-----: | ------------------------------------------- |
+| appMode   |          | `corp`  | `corp` = corp internal app, `isv` = isv app |
+| appType   |          | `eapp`  | `eapp` = mini app, `h5` = web app           |
+| appId     |   true   |         | appId                                       |
+| appKey    |   true   |         | appKey                                      |
+| appSecret |   true   |         | appSecret                                   |
+| appMode   |          | `corp`  | `corp` = corp internal app, `isv` = isv app |
+| appType   |          | `eapp`  | `eapp` = mini app, `h5` = web app           |
+
 
 #### isv app
 
-|       config       | required | default |                 description                 |
-| ------------------ | :------: | :-----: | ------------------------------------------- |
-| suiteKey           |   true   |         | suiteKey                                    |
-| suiteSecret        |   true   |         | suiteSecret                                 |
-| suiteId            |   true   |         | [dingtalk cloud push] set suiteTicket       |
-| eventToken         |   true   |         | [http event callback] encrypt token         |
-| eventAesKey        |   true   |         | [http event callback] encrypt aesKey        |
-| appMode            |  `isv`   | `corp`  | `corp` = corp internal app, `isv` = isv app |
-| appType            |          | `eapp`  | `eapp` = mini app, `h5` = web app           |
-| baseUrl            |          | builtin | base url of [dingtalk open api]             |
-| isvAppAuthTokenUrl |          | builtin | get access token url                        |
-| isvAppAuthInfoUrl  |          | builtin | get auth info url                           |
-| isvAppAgentUrl     |          | builtin | get agent info url                          |
-| cache              |          | builtin | cache setting, use [cache-manager]          |
-| axios              |          | builtin | HTTP Client, use [axios]                    |
+|   config    | required | default |                 description                 |
+| ----------- | :------: | :-----: | ------------------------------------------- |
+| appMode     |  `isv`   | `corp`  | `corp` = corp internal app, `isv` = isv app |
+| appType     |          | `eapp`  | `eapp` = mini app, `h5` = web app           |
+| appId       |   true   |         | appId                                       |
+| suiteKey    |   true   |         | suiteKey                                    |
+| suiteSecret |   true   |         | suiteSecret                                 |
+| suiteId     |   true   |         | [dingtalk cloud push] set suiteTicket       |
+| eventToken  |   true   |         | [http event callback] encrypt token         |
+| eventAesKey |   true   |         | [http event callback] encrypt aesKey        |
+
+
+#### builtin config
+
+|       config        |            description             |
+| ------------------- | ---------------------------------- |
+| cache               | cache setting, use [cache-manager] |
+| axios               | HTTP Client, use [axios]           |
+| baseUrl             | base url of [dingtalk open api]    |
+| corpAppAuthTokenUrl | get access token url of corp app   |
+| isvAppAuthTokenUrl  | get access token url of isv app    |
+| isvAppAuthInfoUrl   | get auth info url                  |
+| isvAppAgentUrl      | get agent info url                 |
 
 > return
 
@@ -125,6 +133,7 @@ yarn test ./test/execute.test.js  # test execute
 for corp app
 
 ```ini
+appId = APP_ID
 appKey = APP_KEY
 appSecret = APP_SECRET
 ```
@@ -134,16 +143,15 @@ for isv app
 ```ini
 appMode = isv
 appType = h5
+appId = APP_ID
+suiteId = SUITE_ID
 suiteKey = SUITE_KEY
 suiteSecret = SUITE_SECRET
-# suiteId is required of Dingtalk Cloud Push
-suiteId = SUITE_ID
 # eventToken and eventAesKey is required of HTTP Event Callback
 eventToken = EVENT_TOKEN
 eventAesKey = EVENT_AES_KEY
 # get corpId and appId from dingtalk-jsapi or querystring
 corpId = CROP_ID
-appId = APP_ID
 ```
 
 ### .env.test
@@ -159,25 +167,6 @@ rdsUser = user
 rdsPassword = password
 rdsDatabase = ding_cloud_push
 ```
-
-## Appendix
-
-### Dingtalk app mode
-
-- corp
-- isv
-- person
-- custom
-
-### Dingtalk app type
-
-- h5
-- eapp
-
-### Dingtalk event push
-
-- HTTP Event Callback
-- Dingtalk Cloud Push
 
 ## TODO
 
