@@ -1,8 +1,9 @@
 'use strict';
 
 const DingtalkSdk = require('../src');
-const { parsed: config } = require('dotenv').config();
 
+const { appEnv, appMode, appType, suiteKey, suiteSecret, corpId } = process.env;
+const config = { appEnv, appMode, appType, suiteKey, suiteSecret, corpId };
 const dingtalkSdk = new DingtalkSdk(config);
 
 dingtalkSdk.execute({

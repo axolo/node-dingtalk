@@ -113,24 +113,25 @@ dingtalk
 
 ## Test
 
-### config
+```bash
+yarn test ./test/config.test.js   # test config
+yarn test ./test/execute.test.js  # test execute
+```
 
-Create `.env` in project root.
+**TIP**: Please create `.env` and `.env.test` in project root before test.
 
-> corp app
+### .env
+
+for corp app
 
 ```ini
-## corp app
-# appMode = corp
-# appType = eapp
 appKey = APP_KEY
 appSecret = APP_SECRET
 ```
 
-> isv app
+for isv app
 
 ```ini
-## isv app
 appMode = isv
 appType = h5
 suiteKey = SUITE_KEY
@@ -145,14 +146,18 @@ corpId = CROP_ID
 appId = APP_ID
 ```
 
-### run
+### .env.test
 
-```bash
-# test DingtalkSdk.execute
-yarn test
-# or run unit test by sigle file, like
-# test config
-node ./test/config.test.js
+```ini
+## http server for http event callback
+httpPort = 7001
+
+## mysql rds for dingtalk cloud push
+rdsHost = your.mysql.host
+rdsPort = 3306
+rdsUser = user
+rdsPassword = password
+rdsDatabase = ding_cloud_push
 ```
 
 ## Appendix
@@ -176,7 +181,7 @@ node ./test/config.test.js
 
 ## TODO
 
-- event: [dingtalk cloud push]
+- fixme: isv app set token interface
 - class: `DingtalkSdkCache`
 - cache: use `Redis`, `MySQL`, etc.
 - test: Assertion Testing

@@ -4,7 +4,7 @@
   "description": "Dingtalk OpenAPI Node.js SDK.",
   "main": "src/index.js",
   "scripts": {
-    "test": "node ./test/execute.test.js"
+    "test": "cross-env NODE_ENV=test node -r dotenv-flow/config"
   },
   "dependencies": {
     "axios": "^0.19.2",
@@ -14,7 +14,8 @@
   },
   "devDependencies": {
     "body-parser": "^1.19.0",
-    "dotenv": "^8.2.0",
+    "cross-env": "^7.0.2",
+    "dotenv-flow": "^3.1.0",
     "eslint": "^6.8.0",
     "eslint-config-egg": "^8.0.1",
     "express": "^4.17.1",

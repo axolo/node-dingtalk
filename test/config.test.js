@@ -1,5 +1,5 @@
 'use strict';
 
-const { parsed: config } = require('dotenv').config();
+const { parsed: config } = require('dotenv-flow').config();
 
 console.log(config);

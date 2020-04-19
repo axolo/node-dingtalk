@@ -2,15 +2,14 @@
 
 const cron = require('node-cron');
 const mysql = require('mysql2');
-const { parsed: config } = require('dotenv').config();
-
-// dingtalk sdk
 const DingtalkSdk = require('../src');
+
+const { appEnv, appMode, appType, suiteKey, suiteSecret, suiteId } = process.env;
+const config = { appEnv, appMode, appType, suiteKey, suiteSecret };
 const dingtalkSdk = new DingtalkSdk(config);
-const { suiteId, suiteKey } = dingtalkSdk.config;
 
 // dingtalk cloud push rds
-const { pushHost: host, pushPort: port, pushUsername: user, pushPassword: password, pushDatabase: database } = config;
+const { rdsHost: host, rdsPort: port, rdsUser: user, rdsPassword: password, rdsDatabase: database } = process.env;
 const Model = mysql.createConnection({ host, port, user, password, database }).promise();
 
 // schedule
