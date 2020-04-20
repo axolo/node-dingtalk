@@ -4,8 +4,8 @@ const cron = require('node-cron');
 const mysql = require('mysql2');
 const DingtalkSdk = require('../src');
 
-const { appEnv, appMode, appType, suiteKey, suiteSecret, suiteId } = process.env;
-const config = { appEnv, appMode, appType, suiteKey, suiteSecret };
+const { appEnv, appMode, appType, appId, suiteId, suiteKey, suiteSecret } = process.env;
+const config = { appEnv, appMode, appType, appId, suiteKey, suiteSecret };
 const dingtalkSdk = new DingtalkSdk(config);
 
 // dingtalk cloud push rds
@@ -23,8 +23,8 @@ const updateSuiteTicket = async () => {
     if (biz_type !== 2 || biz_id !== suiteId) return;
     // update suiteTicket cache if matched
     const { suiteTicket } = JSON.parse(biz_data);
-    await dingtalkSdk.setSuiteTicket(suiteKey, suiteTicket);
-    const cache = await dingtalkSdk.getSuiteTicket(suiteKey);
+    await dingtalkSdk.setSuiteTicket(appId, suiteTicket);
+    const cache = await dingtalkSdk.getSuiteTicket(appId);
     console.log({ suiteTicket: cache });
   }));
 };

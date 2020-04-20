@@ -7,6 +7,16 @@ const deepmerge = require('deepmerge');
 const DingtalkSdkError = require('./error');
 const DingtalkSdkEvent = require('./event');
 
+/**
+ * **钉钉SDK**
+ *
+ * 钉钉于2019年底修改第三方企业应用架构，从一个套件可不包含或包含多个应用，调整为一个套件有且仅有一个应用。
+ * 从此无论企业内部应用还是第三方企业应用，应用均为第一公民，套件遭受降维打击，沦为陪衬。
+ * 本SDK亦将应用视为第一公民，以应用为主键，以适应钉钉架构调整。
+ * 适应新架构同时兼容历史版本，包含多个应用的历史套件亦可被支持。
+ *
+ * @class DingtalkSdk
+ */
 class DingtalkSdk {
   constructor(config) {
     const defaultConfig = {
@@ -100,8 +110,8 @@ class DingtalkSdk {
    */
   async getCorpAppToken({ appKey, appSecret }) {
     const { config } = this;
-    const { corpAppAuthTokenUrl: url, cache } = config;
-    const cacheKey = [ cache.prefix, 'accessToken', appKey ].join('.');
+    const { corpAppAuthTokenUrl: url, cache, appId } = config;
+    const cacheKey = [ cache.prefix, 'accessToken', appId ].join('.');
     const cacheValue = await this.getCache(cacheKey);
     if (cacheValue) return cacheValue;
     const params = { appkey: appKey, appsecret: appSecret };
@@ -124,34 +134,34 @@ class DingtalkSdk {
    * @see https://ding-doc.dingtalk.com/doc#/ln6dmh/troq7i/k9Zn4
    * @see https://ding-doc.dingtalk.com/doc#/serverapi3/xffxf8
    * @see https://ding-doc.dingtalk.com/doc#/ln6dmh/gnu28b
-   * @param {string} suiteKey suiteKey
+   * @param {string} appId appId
    * @return {string} suiteTicket
    * @memberof DingtalkSdk
    */
-  async getSuiteTicket(suiteKey) {
+  async getSuiteTicket(appId) {
     const { config } = this;
     const { suiteTicket, cache } = config;
-    const cacheKey = [ cache.prefix, 'suiteTicket', suiteKey ].join('.');
+    const cacheKey = [ cache.prefix, 'suiteTicket', appId ].join('.');
     const cacheValue = await this.getCache(cacheKey);
     if (cacheValue) return cacheValue;
-    return [ suiteKey, suiteTicket ].join('.');
+    return [ appId, suiteTicket ].join('.');
   }
 
   /**
    * **设置票据套件**
    *
-   * 比如：轮询钉钉云推送RDS数据源获取更新，若`suiteKey`匹配则推送
+   * 比如：轮询钉钉云推送RDS数据源获取更新，若`appId`匹配则推送
    *
    * @see https://ding-doc.dingtalk.com/doc#/ln6dmh/troq7i/k9Zn4
-   * @param {string} suiteKey suiteKey
+   * @param {string} appId appId
    * @param {string} suiteTicket suiteTicket
    * @return {string} 缓存并返回套件票据
    * @memberof DingtalkSdk
    */
-  async setSuiteTicket(suiteKey, suiteTicket) {
-    const { suiteKey: configSuiteKey, cache } = this.config;
-    if (suiteKey !== configSuiteKey) throw new DingtalkSdkError('suiteKey not match');
-    const cacheKey = [ cache.prefix, 'suiteTicket', suiteKey ].join('.');
+  async setSuiteTicket(appId, suiteTicket) {
+    const { appId: configAppId, cache } = this.config;
+    if (appId !== configAppId) throw new DingtalkSdkError('appId not match');
+    const cacheKey = [ cache.prefix, 'suiteTicket', appId ].join('.');
     const result = await this.setCache(cacheKey, suiteTicket);
     return result;
   }
@@ -166,12 +176,12 @@ class DingtalkSdk {
    */
   async getIsvAppToken({ suiteKey, suiteSecret, corpId }) {
     const { config } = this;
-    const { isvAppAuthTokenUrl: url, cache } = config;
-    const cacheKey = [ cache.prefix, 'accessToken', suiteKey, corpId ].join('.');
+    const { isvAppAuthTokenUrl: url, cache, appId } = config;
+    const cacheKey = [ cache.prefix, 'accessToken', appId, corpId ].join('.');
     const cacheValue = await this.getCache(cacheKey);
     if (cacheValue) return cacheValue;
     const timestamp = Date.now();
-    const suiteTicket = await this.getSuiteTicket(suiteKey);
+    const suiteTicket = await this.getSuiteTicket(appId);
     const signature = await this.signature(timestamp, suiteTicket, suiteSecret);
     const method = 'POST';
     const params = { accessKey: suiteKey, timestamp, suiteTicket, signature };
@@ -242,9 +252,9 @@ class DingtalkSdk {
    */
   async getAuthInfo({ suiteKey, suiteSecret, corpId }) {
     const { config } = this;
-    const { isvAppAuthInfoUrl: url } = config;
+    const { isvAppAuthInfoUrl: url, appId } = config;
     const timestamp = Date.now();
-    const suiteTicket = await this.getSuiteTicket(suiteKey);
+    const suiteTicket = await this.getSuiteTicket(appId);
     const signature = await this.signature(timestamp, suiteTicket, suiteSecret);
     const method = 'POST';
     const params = { accessKey: suiteKey, timestamp, suiteTicket, signature };
@@ -257,6 +267,8 @@ class DingtalkSdk {
   /**
    * **获取授权应用信息**
    *
+   * **注意：**同一个`appId`的应用在不同企业其`agentId`不尽相同
+   *
    * @ https://ding-doc.dingtalk.com/doc#/serverapi3/vfitg0
    * @param {object} { suiteKey, suiteSecret, corpId, agentId }
    * @return {object} 授权应用信息
@@ -264,9 +276,9 @@ class DingtalkSdk {
    */
   async getAgent({ suiteKey, suiteSecret, corpId, agentId }) {
     const { config } = this;
-    const { isvAppAgentUrl: url } = config;
+    const { isvAppAgentUrl: url, appId } = config;
     const timestamp = Date.now();
-    const suiteTicket = await this.getSuiteTicket(suiteKey);
+    const suiteTicket = await this.getSuiteTicket(appId);
     const signature = await this.signature(timestamp, suiteTicket, suiteSecret);
     const method = 'POST';
     const params = { accessKey: suiteKey, timestamp, suiteTicket, signature };
@@ -293,13 +305,14 @@ class DingtalkSdk {
    * **请求API**
    *
    * @param {object} request 请求
+   * @param {object} params 其他参数，corpId = ISV应用授权企业ID
    * @return {object} 响应
    * @memberof DingtalkSdk
    */
-  async execute(request) {
+  async execute(request, params) {
     const { config } = this;
     const { baseUrl } = config;
-    const access_token = await this.getToken(config);
+    const access_token = await this.getToken({ ...config, ...params });
     const url = baseUrl + request.url;
     const options = deepmerge(request, { url, params: { access_token } });
     const { data: response } = await this.axios(options);

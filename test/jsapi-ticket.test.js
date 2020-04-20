@@ -2,8 +2,8 @@
 
 const DingtalkSdk = require('../src');
 
-const { appEnv, appMode, appType, suiteKey, suiteSecret, corpId, appId } = process.env;
-const config = { appEnv, appMode, appType, suiteKey, suiteSecret };
+const { appEnv, appMode, appType, appId, suiteKey, suiteSecret, corpId } = process.env;
+const config = { appEnv, appMode, appType, appId, suiteKey, suiteSecret };
 const dingtalkSdk = new DingtalkSdk(config);
 
 dingtalkSdk.getIsvAppToken({

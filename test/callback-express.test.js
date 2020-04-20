@@ -9,8 +9,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const DingtalkSdk = require('../src');
 
-const { appEnv, appMode, appType, suiteKey, suiteSecret, eventToken, eventAesKey, httpPort = 3000 } = process.env;
-const config = { appEnv, appMode, appType, suiteKey, suiteSecret, eventToken, eventAesKey };
+const { appEnv, appMode, appType, appId, suiteKey, suiteSecret, eventToken, eventAesKey } = process.env;
+const config = { appEnv, appMode, appType, appId, suiteKey, suiteSecret, eventToken, eventAesKey };
 const dingtalkSdk = new DingtalkSdk(config);
 
 const app = express();
@@ -35,6 +35,7 @@ app.post('/dingtalk/callback', (req, res) => {
   });
 });
 
+const { httpPort = 3000 } = process.env;
 app.listen(httpPort);
 
 console.log(`HTTP Server is running at: ${httpPort}`);

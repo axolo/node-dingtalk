@@ -11,8 +11,8 @@ const bodyParser = require('koa-bodyparser');
 const router = require('koa-router')();
 const DingtalkSdk = require('../src');
 
-const { appEnv, appMode, appType, suiteKey, suiteSecret, eventToken, eventAesKey, httpPort = 3000 } = process.env;
-const config = { appEnv, appMode, appType, suiteKey, suiteSecret, eventToken, eventAesKey };
+const { appEnv, appMode, appType, appId, suiteKey, suiteSecret, eventToken, eventAesKey } = process.env;
+const config = { appEnv, appMode, appType, appId, suiteKey, suiteSecret, eventToken, eventAesKey };
 const dingtalkSdk = new DingtalkSdk(config);
 
 router.get('/', async ctx => { ctx.body = 'Hello World'; });
@@ -29,6 +29,7 @@ router.post('/dingtalk/callback', async ctx => {
 
 app.use(bodyParser());
 app.use(router.routes(), router.allowedMethods());
+const { httpPort = 3000 } = process.env;
 app.listen(httpPort);
 
 console.log(`HTTP Server is running at: ${httpPort}`);
