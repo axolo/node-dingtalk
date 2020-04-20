@@ -23,8 +23,8 @@ const updateSuiteTicket = async () => {
     if (biz_type !== 2 || biz_id !== suiteId) return;
     // update suiteTicket cache if matched
     const { suiteTicket } = JSON.parse(biz_data);
-    await dingtalkSdk.setSuiteTicket(appId, suiteTicket);
-    const cache = await dingtalkSdk.getSuiteTicket(appId);
+    await dingtalkSdk.setSuiteTicket(suiteKey, suiteTicket);
+    const cache = await dingtalkSdk.getSuiteTicket(suiteKey);
     console.log({ suiteTicket: cache });
   }));
 };
