@@ -14,11 +14,11 @@ const config = { appEnv, appMode, appType, suiteKey, suiteSecret, eventToken, ev
 const dingtalkSdk = new DingtalkSdk(config);
 
 const app = express();
-const jsonParser = bodyParser.json();
+app.use(bodyParser());
 
 app.get('/', (req, res) => res.send('hello world'));
 
-app.post('/dingtalk/callback', jsonParser, (req, res) => {
+app.post('/dingtalk/callback', (req, res) => {
   const { signature, timestamp, nonce } = req.query;
   const { encrypt } = req.body;
   dingtalkSdk.callback({

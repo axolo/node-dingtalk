@@ -1,6 +1,6 @@
 {
   "name": "@axolo/node-dingtalk",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Dingtalk OpenAPI Node.js SDK.",
   "main": "src/index.js",
   "scripts": {
@@ -19,6 +19,9 @@
     "eslint": "^6.8.0",
     "eslint-config-egg": "^8.0.1",
     "express": "^4.17.1",
+    "koa": "^2.11.0",
+    "koa-bodyparser": "^4.3.0",
+    "koa-router": "^8.0.8",
     "mysql2": "^2.1.0",
     "node-cron": "^2.0.3",
     "nodemon": "^2.0.3"

@@ -47,11 +47,11 @@ class DingtalkSdk {
    *
    * mode | prefix   | type        | suffix
    * -----|----------|-------------|----------
-   * corp | dingtalk | accessToken | appKey
-   * corp | dingtalk | jsapiTicket | accessToken
-   * isv  | dingtalk | suiteTicket | suiteKey
-   * isv  | dingtalk | accessToken | suiteKey.corpId
-   * isv  | dingtalk | jsapiTicket | accessToken
+   * corp | dingtalk | accessToken | appId
+   * corp | dingtalk | jsapiTicket | appId
+   * isv  | dingtalk | suiteTicket | appId
+   * isv  | dingtalk | accessToken | appId.corpId
+   * isv  | dingtalk | jsapiTicket | appId.corpId
    *
    * @param {string} key      键
    * @param {any} val         值

@@ -34,9 +34,9 @@ yarn add @axolo/node-dingtalk
 | appMode     |  `isv`   | `corp`  | `corp` = corp internal app, `isv` = isv app |
 | appType     |          | `eapp`  | `eapp` = mini app, `h5` = web app           |
 | appId       |   true   |         | appId                                       |
+| suiteId     |   true   |         | [dingtalk cloud push] set suiteTicket       |
 | suiteKey    |   true   |         | suiteKey                                    |
 | suiteSecret |   true   |         | suiteSecret                                 |
-| suiteId     |   true   |         | [dingtalk cloud push] set suiteTicket       |
 | eventToken  |   true   |         | [http event callback] encrypt token         |
 | eventAesKey |   true   |         | [http event callback] encrypt aesKey        |
 
@@ -47,7 +47,7 @@ yarn add @axolo/node-dingtalk
 | ------------------- | ---------------------------------- |
 | cache               | cache setting, use [cache-manager] |
 | axios               | HTTP Client, use [axios]           |
-| baseUrl             | base url of [dingtalk open api]    |
+| baseUrl             | base url of [Dingtalk OpenAPI]     |
 | corpAppAuthTokenUrl | get access token url of corp app   |
 | isvAppAuthTokenUrl  | get access token url of isv app    |
 | isvAppAuthInfoUrl   | get auth info url                  |
@@ -65,7 +65,7 @@ more request options see [axios].
 
 | request |                           description                           |
 | ------- | --------------------------------------------------------------- |
-| url     | dingtalk Open API url without baseUrl, like `/user/getuserinfo` |
+| url     | Dingtalk OpenAPI url without baseUrl, like `/user/getuserinfo` |
 | method  | HTTP Method                                                     |
 | headers | HTTP Headers                                                    |
 | params  | HTTP querystring as Object by GET                               |
@@ -144,14 +144,13 @@ for isv app
 appMode = isv
 appType = h5
 appId = APP_ID
+# suiteId is required of Dingtalk Cloud Push
 suiteId = SUITE_ID
 suiteKey = SUITE_KEY
 suiteSecret = SUITE_SECRET
 # eventToken and eventAesKey is required of HTTP Event Callback
 eventToken = EVENT_TOKEN
 eventAesKey = EVENT_AES_KEY
-# get corpId and appId from dingtalk-jsapi or querystring
-corpId = CROP_ID
 ```
 
 ### .env.test
@@ -166,14 +165,15 @@ rdsPort = 3306
 rdsUser = user
 rdsPassword = password
 rdsDatabase = ding_cloud_push
+
+# get corpId and appId from dingtalk-jsapi or querystring
+corpId = CROP_ID
 ```
 
 ## TODO
 
-- fixme: isv app set token interface
-- class: `DingtalkSdkCache`
-- cache: use `Redis`, `MySQL`, etc.
-- test: Assertion Testing
+- cache: class `DingtalkSdkCache`, support `memory`, `redis`, `mysql`, etc.
+- test: Assertion Testing with Mocha or Jest.
 
 ## Thanks
 
@@ -183,7 +183,7 @@ rdsDatabase = ding_cloud_push
 
 [axios]: https://github.com/axios/axios
 [cache-manager]: https://github.com/BryanDonovan/node-cache-manager
-[dingtalk open api]: https://oapi.dingtalk.com
+[Dingtalk OpenAPI]: https://oapi.dingtalk.com
 [dingtalk error]: https://ding-doc.dingtalk.com/doc#/faquestions/rftpfg
 [http event callback]: https://ding-doc.dingtalk.com/doc#/serverapi3/igq88i
 [dingtalk jsapi ticket]: https://ding-doc.dingtalk.com/doc#/dev/uwa7vs
