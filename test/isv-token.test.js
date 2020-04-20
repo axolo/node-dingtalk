@@ -8,4 +8,4 @@ const dingtalkSdk = new DingtalkSdk(config);
 
 dingtalkSdk.getIsvAppToken({ suiteKey, suiteSecret, corpId })
   .catch(err => console.log(err))
-  .then(accessToken => console.log({ accessToken }));
+  .then(accessToken => console.log({ accessToken, ttl: 7200 }));

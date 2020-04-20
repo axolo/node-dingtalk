@@ -7,8 +7,6 @@ const config = { appEnv, appMode, appType, appId, suiteKey, suiteSecret };
 const dingtalkSdk = new DingtalkSdk(config);
 
 dingtalkSdk.getAuthInfo({
-  suiteKey,
-  suiteSecret,
   corpId,
 }).catch(err => {
   console.log(err);

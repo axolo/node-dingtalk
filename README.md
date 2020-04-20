@@ -20,12 +20,9 @@ yarn add @axolo/node-dingtalk
 | --------- | :------: | :-----: | ------------------------------------------- |
 | appMode   |          | `corp`  | `corp` = corp internal app, `isv` = isv app |
 | appType   |          | `eapp`  | `eapp` = mini app, `h5` = web app           |
-| appId     |   true   |         | appId                                       |
+| agentId   |   true   |         | agentId                                     |
 | appKey    |   true   |         | appKey                                      |
 | appSecret |   true   |         | appSecret                                   |
-| appMode   |          | `corp`  | `corp` = corp internal app, `isv` = isv app |
-| appType   |          | `eapp`  | `eapp` = mini app, `h5` = web app           |
-
 
 #### isv app
 
@@ -104,6 +101,7 @@ This method use as middleware usualy.
 const DingtalkSdk = require('@axolo/node-dingtalk');
 
 const config = {
+  agentId: 'AGENT_ID',
   appKey: 'APP_KEY',
   appSecret: 'APP_SECRET',
 };
@@ -133,7 +131,7 @@ yarn test ./test/execute.test.js  # test execute
 for corp app
 
 ```ini
-appId = APP_ID
+agentId = AGENT_ID
 appKey = APP_KEY
 appSecret = APP_SECRET
 ```
