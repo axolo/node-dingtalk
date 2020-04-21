@@ -6,8 +6,7 @@ const { appEnv, appMode, appType, appKey, appSecret, appId, suiteKey, suiteSecre
 const config = { appEnv, appMode, appType, appKey, appSecret, appId, suiteKey, suiteSecret, corpId };
 const dingtalkSdk = new DingtalkSdk(config);
 
-dingtalkSdk.execute({
-  url: '/user/simplelist',
+dingtalkSdk.execute('/user/simplelist', {
   params: { department_id: 1 },
 }, {
   corpId,

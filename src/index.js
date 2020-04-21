@@ -306,19 +306,20 @@ class DingtalkSdk {
   /**
    * **请求API**
    *
+   * @param {string} api API接口
    * @param {object} request 请求
-   * @param {object} options 其他参数，corpId = ISV应用授权企业ID
+   * @param {object} scope 范围及其他参数，corpId = ISV应用授权企业ID
    * @return {object} 响应
    * @memberof DingtalkSdk
    */
-  async execute(request, options) {
+  async execute(api, request = {}, scope = {}) {
     const { config } = this;
     const { baseUrl } = config;
-    const access_token = await this.getToken({ ...config, ...options });
-    const url = baseUrl + request.url;
-    const params = deepmerge(request, { url, params: { access_token } });
-    const { data: response } = await this.axios(params);
-    return response;
+    const access_token = await this.getToken({ ...config, ...scope });
+    const options = deepmerge(request, { params: { access_token } });
+    const url = baseUrl + api;
+    const { data } = await this.axios(url, options);
+    return data;
   }
 
   /**

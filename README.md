@@ -55,19 +55,19 @@ yarn add @axolo/node-dingtalk
 
 A instance of `Dingtalk` OpenAPI Node.js SDK.
 
-### execute(request)
+### execute(api, request = {}, scope = {})
 
 more request options see [axios].
 
 > params
 
-| request |                           description                           |
-| ------- | --------------------------------------------------------------- |
-| url     | Dingtalk OpenAPI url without baseUrl, like `/user/getuserinfo` |
-| method  | HTTP Method                                                     |
-| headers | HTTP Headers                                                    |
-| params  | HTTP querystring as Object by GET                               |
-| body    | HTTP body as Object by POST/PATCH/PUT                           |
+|     parmas     |              description               |
+| -------------- | -------------------------------------- |
+| api            | querystring, Dingtalk OpenAPI          |
+| request.method | HTTP Method                            |
+| request.params | HTTP querystring as Object by GET      |
+| request.body   | HTTP body as Object by POST/PATCH/PUT  |
+| scope.corpId   | to get accessToken per corp of isv app |
 
 > return
 
