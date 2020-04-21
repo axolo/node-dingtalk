@@ -21,6 +21,7 @@ class DingtalkSdk {
   constructor(config) {
     const defaultConfig = {
       axios,
+      cacheManager,
       cache: { store: 'memory', prefix: 'dingtalk' },
       suiteTicket: 'suiteTicket', // 测试应用可为任意字符串
       baseUrl: 'https://oapi.dingtalk.com',
@@ -32,7 +33,7 @@ class DingtalkSdk {
     };
     this.config = deepmerge(defaultConfig, config);
     this.axios = this.config.axios;
-    this.cache = cacheManager.caching(this.config.cache);
+    this.cache = this.config.cacheManager.caching(this.config.cache);
   }
 
   /**
@@ -241,6 +242,16 @@ class DingtalkSdk {
     return result;
   }
 
+  async getAgentId({ corpId } = {}) {
+    const { config } = this;
+    const { agentId, appMode, appId } = config;
+    if (appMode !== 'isv') return parseInt(agentId);
+    const authInfo = await this.getAuthInfo({ corpId });
+    const { auth_info: { agent } } = authInfo;
+    const { agentid } = agent.find(agent => agent.appid === parseInt(appId));
+    return agentid;
+  }
+
   /**
    * **获取授权应用信息**
    *
@@ -296,17 +307,17 @@ class DingtalkSdk {
    * **请求API**
    *
    * @param {object} request 请求
-   * @param {object} params 其他参数，corpId = ISV应用授权企业ID
+   * @param {object} options 其他参数，corpId = ISV应用授权企业ID
    * @return {object} 响应
    * @memberof DingtalkSdk
    */
-  async execute(request, params) {
+  async execute(request, options) {
     const { config } = this;
     const { baseUrl } = config;
-    const access_token = await this.getToken({ ...config, ...params });
+    const access_token = await this.getToken({ ...config, ...options });
     const url = baseUrl + request.url;
-    const options = deepmerge(request, { url, params: { access_token } });
-    const { data: response } = await this.axios(options);
+    const params = deepmerge(request, { url, params: { access_token } });
+    const { data: response } = await this.axios(params);
     return response;
   }
 

@@ -40,15 +40,16 @@ yarn add @axolo/node-dingtalk
 
 #### builtin config
 
-|       config        |            description             |
-| ------------------- | ---------------------------------- |
-| cache               | cache setting, use [cache-manager] |
-| axios               | HTTP Client, use [axios]           |
-| baseUrl             | base url of [Dingtalk OpenAPI]     |
-| corpAppAuthTokenUrl | get access token url of corp app   |
-| isvAppAuthTokenUrl  | get access token url of isv app    |
-| isvAppAuthInfoUrl   | get auth info url                  |
-| isvAppAgentUrl      | get agent info url                 |
+|       config        |           description            |
+| ------------------- | -------------------------------- |
+| axios               | HTTP Client, use [axios]         |
+| cacheManager        | cache,  use [cache-manager]      |
+| cache               | cache setting                    |
+| baseUrl             | base url of [Dingtalk OpenAPI]   |
+| corpAppAuthTokenUrl | get access token url of corp app |
+| isvAppAuthTokenUrl  | get access token url of isv app  |
+| isvAppAuthInfoUrl   | get auth info url                |
+| isvAppAgentUrl      | get agent info url               |
 
 > return
 
@@ -170,8 +171,9 @@ corpId = CROP_ID
 
 ## TODO
 
-- cache: class `DingtalkSdkCache`, support `memory`, `redis`, `mysql`, etc.
 - test: Assertion Testing with Mocha or Jest.
+- cache: class `DingtalkSdkCache`, support `memory`, `redis`, `mysql`, etc.
+- props: `DingtalkSdk.event`, `DingtalkSdk.error`.
 
 ## Thanks
 
