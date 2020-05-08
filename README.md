@@ -94,26 +94,22 @@ and `response` is encrypted response for callback success.
 
 ## Example
 
-### request
-
 ```js
 const DingtalkSdk = require('@axolo/node-dingtalk');
 
-const config = {
+const dingtalk = new DingtalkSdk({
   agentId: 'AGENT_ID',
   appKey: 'APP_KEY',
   appSecret: 'APP_SECRET',
-};
-const dingtalkSdk = new DingtalkSdk(config);
+});
 
-const request = {
-  url: '/user/getuserinfo',
-  body: { code: 'authcode' },
-};
-dingtalk
-  .execute(request)
-  .catch(err => console.log(err))
-  .then(res => console.log(res));
+dingtalk.execute('/user/getuserinfo', {
+  body: { code: 'authcode' }
+}).catch(err => {
+  console.log(err);
+}).then(res => {
+  console.log(res);
+});
 ```
 
 ## Test
