@@ -21,10 +21,9 @@ router.post('/dingtalk/callback', async ctx => {
   const { query = {}, body = {} } = ctx.request;
   const { signature, timestamp, nonce } = query;
   const { encrypt } = body;
-  const res = await dingtalkSdk.callback({ signature, timestamp, nonce, encrypt });
-  const { event, response } = res;
-  console.log(__filename, event);
-  ctx.body = response;
+  const result = await dingtalkSdk.callback({ signature, timestamp, nonce, encrypt });
+  console.log(__filename, result);
+  ctx.body = result && result.response;
 });
 
 app.use(bodyParser());

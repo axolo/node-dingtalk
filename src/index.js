@@ -335,18 +335,21 @@ class DingtalkSdk {
     const key = appMode === 'isv' ? suiteKey : appKey;
     const dingtalkSdkEvent = new DingtalkSdkEvent({ token: eventToken, aesKey: eventAesKey, key });
     const event = await dingtalkSdkEvent.decrypt(request);
+    if (!event) return event;
     const { EventType } = event;
     switch (EventType) {
       default: break;
-      case 'suite_ticket': { // update suiteTicket in cache
+      // update suiteTicket in cache
+      case 'suite_ticket': {
         const { SuiteKey, SuiteTicket } = event;
         await this.setSuiteTicket(SuiteKey, SuiteTicket);
         break;
       }
     }
+    // response success to dingtalk
     const { timestamp } = request;
     const response = dingtalkSdkEvent.response({ timestamp });
-    return { event, response };
+    return { ...event, response };
   }
 }
 

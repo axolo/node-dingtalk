@@ -29,9 +29,8 @@ app.post('/dingtalk/callback', (req, res) => {
   }).catch(err => {
     res.send(err);
   }).then(result => {
-    const { event, response } = result;
-    console.log(__filename, event);
-    res.send(response || result);
+    console.log(__filename, result);
+    res.send(result && result.response);
   });
 });
 

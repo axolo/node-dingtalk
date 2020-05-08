@@ -89,10 +89,8 @@ This method use as middleware usualy.
 
 > return
 
-|  params  |           description           |
-| -------- | ------------------------------- |
-| event    | event decrypted of callback     |
-| response | response encrypted for callback |
+event decrypted of callback.
+and `response` is encrypted response for callback success.
 
 ## Example
 
